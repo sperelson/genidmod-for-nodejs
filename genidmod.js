@@ -42,43 +42,45 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-genid = function() {
-	this.m_count	= 0
-	this.counter	= 0
-	this.millisOld	= 0
-}
+var genid = function() {
+	this.m_count	= 0;
+	this.counter	= 0;
+	this.millisOld	= 0;
+};
 
 genid.prototype.gen = function()
 {
-	var protectRollover = false
+	var protectRollover = false;
 	// 01 Jan 2010 is the selected epoch. Use
 	// 		Date.UTC(2010,0,1)
 	// to get this number (1262304000000)
-	var millis = new Date().getTime() - 1262304000000
+	var millis = new Date().getTime() - 1262304000000;
 
 	if (this.millisOld == millis) {
-		this.counter++
+		this.counter++;
 		// Rollover protection
 		if (this.counter == 4095)
 		{
-			protectRollover = true
-			this.counter = 0
+			protectRollover = true;
+			this.counter = 0;
 			setTimeout(function () {
-				console.log('rolledover')
-  				arguments.callee
+				console.log('rolledover');
+  				arguments.callee;
 			}, 1)
 		}
 	} else {
-		this.millisOld = millis
-		this.counter = 0
+		this.millisOld = millis;
+		this.counter = 0;
 	}
 
 	if (protectRollover == false)
 	{
-		millis = millis * Math.pow(2, 12)
-		var uid = millis + this.counter
-		return uid
+		millis = millis * Math.pow(2, 12);
+		var uid = millis + this.counter;
+		return uid;
 	}
-}
+};
 
-exports.genid = genid
+// Automatically execute the constructor so the module context is a genid
+// singleton, since Node caches subsequent requires.
+module.exports = new genid();
